@@ -113,10 +113,3 @@ criterion = nn.CrossEntropyLoss().to(device)
 optimizer = optim.Adam(model.parameters())
 train_state = train(model, train_loader, epochs=EPOCHS, batch_size=30)
 torch.save(model.state_dict(),'./convnext_base.pth')
-
-
-
-
-
-
-
