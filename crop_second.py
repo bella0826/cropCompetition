@@ -46,7 +46,7 @@ class net(nn.Module):
             nn.Linear(256, 33),
             nn.Softmax(dim=1)
         )
-        self.model.fc = self.classifier
+        self.model.head.fc = self.classifier
     def forward(self, data_per_batch):
         out = self.model(data_per_batch)
         return out
