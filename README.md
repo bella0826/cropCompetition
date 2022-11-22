@@ -1,1 +1,1 @@
-"# cropCompetition" 
+# cropCompetition
