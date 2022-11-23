@@ -27,7 +27,7 @@ train_data = datasets.ImageFolder(root_path, transform = data_transform)
 print(train_data.classes)
 
 #train_data, valid_data = torch.utils.data.random_split(dataset = data, lengths = [train_size, valid_size])
-train_loader = DataLoader(dataset = train_data, batch_size = 20, shuffle = True)
+train_loader = DataLoader(dataset = train_data, batch_size = 16, shuffle = True)
 #valid_loader = DataLoader(dataset = valid_data, batch_size = 16, shuffle = True, num_workers = 2)
 
 # dataset_size = len(train_data)
@@ -40,7 +40,7 @@ class net(nn.Module):
         super(net, self).__init__()
         self.model = timm.create_model("convnext_base", pretrained = True)
         print(self.model.default_cfg)
-        print(self.model.classifier)
+        print(self.model.get_classifier())
         self.classifier = nn.Sequential(
             nn.Linear(1024, 256),
             nn.Linear(256, 33),
