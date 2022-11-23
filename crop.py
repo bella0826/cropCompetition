@@ -13,6 +13,7 @@ import time
 
 root_path = "../YuAn/crops_dataset/"
 EPOCHS = 20
+BATCH_SIZE = 18
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 print(device)
 
@@ -20,23 +21,21 @@ resize = 320
 #center_crop = 224
 data_transform = transforms.Compose([
     transforms.Resize((resize, resize)),
-    transforms.ToTensor()
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
 ])
 
 train_data = datasets.ImageFolder(root_path, transform = data_transform)
 print(train_data.classes)
+NUM_CLASSES = len(train_data.classes)
 
-#train_data, valid_data = torch.utils.data.random_split(dataset = data, lengths = [train_size, valid_size])
-train_loader = DataLoader(dataset = train_data, batch_size = 20, shuffle = True)
-#valid_loader = DataLoader(dataset = valid_data, batch_size = 16, shuffle = True, num_workers = 2)
-
-# dataset_size = len(train_data)
-# print('\ndataset_size =', dataset_size)
-# val_size = len(valid_data)
-# print('\nval_size =', val_size)
+train_loader = DataLoader(dataset = train_data, batch_size = BATCH_SIZE, shuffle = True)
 
 def build_model():
-    model = timm.create_model("convnext_base", pretrained = True, num_classes = 33)
+    model = timm.create_model("convnext_base", pretrained = True, num_classes = NUM_CLASSES)
     for name, param in model.named_parameters():
         param.requires_grad = True
     # 提取fully-connected layer中固定的參數
@@ -52,9 +51,8 @@ def train(model, x_train, epochs, batch_size=8):
         compare = matrix - t
         accuracy = (t.shape[0] - np.count_nonzero(compare)) / t.shape[0]
         return accuracy
-
     criterion = nn.CrossEntropyLoss().to(device)
-    optimizer = optim.Adam(model.parameters())
+    optimizer = optim.AdamW(model.parameters(), lr = 1e-5)
     train_state = []
     torch.cuda.empty_cache()
     early_stopping_count = -1
@@ -104,14 +102,5 @@ def train(model, x_train, epochs, batch_size=8):
     return train_state
 
 model = build_model()
-criterion = nn.CrossEntropyLoss().to(device)
-optimizer = optim.Adam(model.parameters())
-train_state = train(model, train_loader, epochs=EPOCHS, batch_size=30)
+train_state = train(model, train_loader, epochs=EPOCHS, batch_size=BATCH_SIZE)
 torch.save(model.state_dict(),'./convnext_base.pth')
-
-
-
-
-
-
-
