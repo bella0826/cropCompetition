@@ -1,6 +1,6 @@
 # cropCompetition
 ## Environment & Using Language
---Language: python3
+-- Language: python3
 
 ## Data set credit from AI cup
 Classes: 33
