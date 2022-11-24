@@ -2,8 +2,6 @@
 ## Environment & Using Language
 --Language: python3
 
---Package: pytorch、timm
-
 ## Data set credit from AI cup
 Classes: 33
 
