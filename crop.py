@@ -7,39 +7,35 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader, random_split
-from torchvision import models, transforms, datasets
+import torchvision.models as models
+from torchvision import transforms, datasets
 import numpy as np
 import time
+import pathlib
+
 
 root_path = "../YuAn/crops_dataset/"
 EPOCHS = 20
-BATCH_SIZE = 18
+BATCH_SIZE = 10
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 print(device)
 
-resize = 320
-#center_crop = 224
-data_transform = transforms.Compose([
-    transforms.Resize((resize, resize)),
-    transforms.ToTensor(),
-    transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-    )
-])
+sizeW, sizeH = 384, 384
+data_transform = transforms.Compose([transforms.Resize((sizeW, sizeH)),
+                                     transforms.RandomHorizontalFlip(p=0.5),
+                                     transforms.RandomRotation(degrees=(-30, 30)),
+                                     transforms.ToTensor(),
+                                     transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])])
 
 train_data = datasets.ImageFolder(root_path, transform = data_transform)
-print(train_data.classes)
-NUM_CLASSES = len(train_data.classes)
-
+print(train_data.classes, "\n")
 train_loader = DataLoader(dataset = train_data, batch_size = BATCH_SIZE, shuffle = True)
+NUM_CLASSES = len(train_data.classes)
 
 def build_model():
     model = timm.create_model("convnext_base", pretrained = True, num_classes = NUM_CLASSES)
     for name, param in model.named_parameters():
         param.requires_grad = True
-    # 提取fully-connected layer中固定的參數
-    # number od crops = 33
     print(model.get_classifier())
     model = model.to(device)
     print(model)
