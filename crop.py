@@ -48,7 +48,7 @@ def train(model, x_train, epochs, batch_size=8):
         accuracy = (t.shape[0] - np.count_nonzero(compare)) / t.shape[0]
         return accuracy
     criterion = nn.CrossEntropyLoss().to(device)
-    optimizer = optim.AdamW(model.parameters(), lr = 1e-5)
+    optimizer = optim.AdamW(model.parameters(), lr = 5e-5)
     train_state = []
     torch.cuda.empty_cache()
     early_stopping_count = -1

@@ -22,13 +22,13 @@ def build_model():
     print(model)
     return model
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 print(device)
 batch_size = 128
 TRAIN_DATA_PATH = "../YuAn/crops_dataset"
 TEST_DATA_PATH = "../YuAn/public_test"
-PATH = "./path/timm_model_6.pth"
-sizeW, sizeH = 320, 320
+PATH = "./path/timm_model_8.pth"
+sizeW, sizeH = 384, 384
 train_data = datasets.ImageFolder(TRAIN_DATA_PATH)
 category_dict = {j:i for i, j in train_data.class_to_idx.items()}
 test_data = datasets.ImageFolder(TEST_DATA_PATH, 
@@ -53,4 +53,4 @@ with torch.no_grad():
 
 lst = [category_dict.get(i) for i in lst]
 df = pd.DataFrame(data={"filename": filename, "label": lst})
-df.to_csv("./submission_1128.csv", index=False)
+df.to_csv("./submission_1206_8.csv", index=False)
